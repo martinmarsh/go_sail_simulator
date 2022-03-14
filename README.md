@@ -1,5 +1,5 @@
 # navsys
 
-experimental
+Boat navigation using navmux and nmea0183
 
-Boat navigation using navmux
+Status: experimental code
