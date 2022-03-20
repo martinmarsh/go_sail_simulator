@@ -1,0 +1,37 @@
+
+# Reserved channels:
+# command       used for keyboard commands
+# so these channels should not be used in inputs or outputs below
+compass:
+    name: com4
+    type: serial
+    baud: 38400
+    input: to_compass
+    outputs:
+      - to_udp_client
+
+bridge:
+    name: com5
+    type: serial
+    baud: 38400
+    input: to_2000
+    outputs:
+      - to_udp_client
+
+udp:
+    type:  udp_client
+    input: to_udp_client
+    server_address: 192.168.1.14:8011
+
+
+helm:
+    type: auto-helm
+    input: to_helm
+
+
+keys:
+    type: keyboard
+    outputs: 
+        - to_helm
+
+
