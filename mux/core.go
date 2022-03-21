@@ -65,7 +65,8 @@ func Execute(config *ConfigData) {
 	}
 
 	go compass(&channels)
-	
+	go ais(&channels)
+
 	for {
 		command := <-(channels["command"])
 		fmt.Printf("Command '%s' received\n", command)
@@ -83,23 +84,44 @@ func Execute(config *ConfigData) {
 	}
 }
 
+
 func compass(channels *map[string](chan string)){
 	nm := nmea.Sentences.MakeHandle()
-	nm.Parse("$HCHDM,172.5,M*28")
-	nm.Parse("$GPRMC,110910.59,A,5047.3986,N,00054.6007,W,0.08,0.19,150920,0.24,W,D,V*75")
-	fmt.Println(nm.GetMap())
-	dmap := nm.GetMap()
-	dmap["hdm"] = "123.5°M"
-	nm.Update(dmap)
-	fmt.Println(dmap)
-	hdm, _ := nm.WriteSentence("hc", "hdm")
-	fmt.Println(hdm)
-	fmt.Println(nm.GetMap())
+	course := 100.2
+	data := make(map[string]string)
+	sg := -1.0
+
+	for{
+		data["hdm"] = fmt.Sprintf("%03.1f°M", course)
+		nm.Update(data)
+		hdm, _ := nm.WriteSentence("hc", "hdm")
+		(*channels)["to_compass"] <- hdm
+		//(*channels)["to_2000"] <- hdm
+		fmt.Println(hdm)
+		time.Sleep(100 * time.Millisecond)
+		if course > 105{
+			sg = -1.0
+		}else if course < 95 {
+			sg = 1.0
+		} 
+		course += 0.1*sg
+
+	}
+}
+
+func ais(channels *map[string](chan string)){
 
 
 	for{
-		(*channels)["to_compass"] <- "$HCHDM,172.5,M*28"
-		(*channels)["to_2000"] <- "$HCHDM,172.5,M*28"
-		time.Sleep(100 * time.Millisecond)
+		
+		(*channels)["to_2000"] <- "!AIVDM,1,1,,A,13aEOK?P00PD2wVMdLDRhgvL289?,0*26"
+		time.Sleep(10 * time.Millisecond)
+		(*channels)["to_2000"] <- "!AIVDM,1,1,,B,16S`2cPP00a3UF6EKT@2:?vOr0S2,0*00"
+		time.Sleep(10 * time.Millisecond)
+		(*channels)["to_2000"] <- "!AIVDM,2,1,9,B,53nFBv01SJ<thHp6220H4heHTf2222222222221?50:454o<`9QSlUDp,0*09"
+		time.Sleep(10 * time.Millisecond)
+		(*channels)["to_2000"] <- "!AIVDM,2,2,9,B,888888888888880,2*2E"
+		time.Sleep(10 * time.Millisecond)
 	}
 }
+

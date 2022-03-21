@@ -3,7 +3,7 @@ module go_sail_simulator
 go 1.17
 
 require (
-	github.com/martinmarsh/nmea0183 v0.1.2
+	github.com/martinmarsh/nmea0183 v0.1.3
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/viper v1.10.1
 	go.bug.st/serial v1.3.5

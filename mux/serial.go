@@ -81,6 +81,7 @@ func serialWriter(name string, port serial.Port, input []string, channels *map[s
 		for _, in := range input {
 			//fmt.Printf("\nWaiting for input to serial '%s'\n", in)
 			str := <-(*channels)[in]
+			str += "\r\n"
 			//fmt.Printf("\nWriting to serial '%s'\n", str)
 			_, err := port.Write([]byte(str))
 			if err != nil {

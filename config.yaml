@@ -5,7 +5,7 @@
 compass:
     name: com4
     type: serial
-    baud: 38400
+    baud: 4800
     input: to_compass
     outputs:
       - to_udp_client
